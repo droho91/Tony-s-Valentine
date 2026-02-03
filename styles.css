@@ -48,6 +48,7 @@ body {
     height: 48px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
     position: absolute;
+    z-index: 1;
   }
   
   .no-button {
@@ -64,6 +65,7 @@ body {
     left: 0;
     top: 0;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    z-index: 2;
   }
   
   .gif_container img {

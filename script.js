@@ -57,6 +57,15 @@ function handleYesClick() {
     window.location.href = "yes_page.html";
 }
 
+function rectsOverlap(rectA, rectB, gap = 10) {
+    return !(
+        rectA.right + gap < rectB.left ||
+        rectA.left > rectB.right + gap ||
+        rectA.bottom + gap < rectB.top ||
+        rectA.top > rectB.bottom + gap
+    );
+}
+
 function setNoInitialPosition() {
     const noButton = document.querySelector('.no-button');
     const yesButton = document.querySelector('.yes-button');
@@ -110,23 +119,41 @@ function setupNoButtonProximity() {
 function moveNoButton() {
     const noButton = document.querySelector('.no-button');
     const buttons = document.querySelector('.buttons');
+    const yesButton = document.querySelector('.yes-button');
 
-    if (!noButton || !buttons) {
+    if (!noButton || !buttons || !yesButton) {
         return;
     }
 
     const containerRect = buttons.getBoundingClientRect();
     const buttonRect = noButton.getBoundingClientRect();
+    const yesRect = yesButton.getBoundingClientRect();
     const padding = 20;
     const maxX = Math.max(padding, containerRect.width - buttonRect.width - padding);
     const maxY = Math.max(padding, containerRect.height - buttonRect.height - padding);
-    const x = Math.random() * (maxX - padding) + padding;
-    const y = Math.random() * (maxY - padding) + padding;
+    let x = padding;
+    let y = padding;
+
+    for (let i = 0; i < 20; i += 1) {
+        x = Math.random() * (maxX - padding) + padding;
+        y = Math.random() * (maxY - padding) + padding;
+
+        const candidateRect = {
+            left: containerRect.left + x,
+            top: containerRect.top + y,
+            right: containerRect.left + x + buttonRect.width,
+            bottom: containerRect.top + y + buttonRect.height,
+        };
+
+        if (!rectsOverlap(candidateRect, yesRect, 12)) {
+            break;
+        }
+    }
 
     noButton.style.left = `${x}px`;
     noButton.style.top = `${y}px`;
 }
 
-window.addEventListener('load', setNoInitialPosition);
+document.addEventListener('DOMContentLoaded', setNoInitialPosition);
+document.addEventListener('DOMContentLoaded', setupNoButtonProximity);
 window.addEventListener('resize', setNoInitialPosition);
-window.addEventListener('load', setupNoButtonProximity);
